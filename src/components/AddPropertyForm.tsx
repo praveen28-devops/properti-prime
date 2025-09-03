@@ -7,17 +7,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, X } from "lucide-react";
 import { Property } from "./PropertyCard";
-import { useToast } from "@/hooks/use-toast";
+import { useCreateProperty } from "@/hooks/useProperties";
+import { CreatePropertyRequest } from "@/services/api";
 
 interface AddPropertyFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onPropertyAdded: (property: Property) => void;
 }
 
-export const AddPropertyForm = ({ isOpen, onClose, onPropertyAdded }: AddPropertyFormProps) => {
-  const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export const AddPropertyForm = ({ isOpen, onClose }: AddPropertyFormProps) => {
+  const createPropertyMutation = useCreateProperty();
   const [formData, setFormData] = useState({
     title: "",
     address: "",
@@ -68,41 +67,34 @@ export const AddPropertyForm = ({ isOpen, onClose, onPropertyAdded }: AddPropert
     setErrors({});
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) return;
 
-    setIsSubmitting(true);
+    const propertyData: CreatePropertyRequest = {
+      title: formData.title,
+      location: formData.address,
+      price: parseFloat(formData.price),
+      type: formData.propertyType,
+      beds: parseInt(formData.bedrooms),
+      baths: parseFloat(formData.bathrooms),
+      priceType: formData.priceType,
+      squareFeet: parseInt(formData.squareFeet),
+      description: formData.description,
+      imageUrl: formData.imageUrl || undefined,
+      contactPhone: formData.contactPhone || undefined,
+      contactEmail: formData.contactEmail || undefined,
+    };
 
-    // Simulate API call
-    setTimeout(() => {
-      const newProperty: Property = {
-        id: Date.now().toString(),
-        title: formData.title,
-        address: formData.address,
-        propertyType: formData.propertyType,
-        priceType: formData.priceType,
-        price: parseFloat(formData.price),
-        bedrooms: parseInt(formData.bedrooms),
-        bathrooms: parseFloat(formData.bathrooms),
-        squareFeet: parseInt(formData.squareFeet),
-        description: formData.description,
-        imageUrl: formData.imageUrl || undefined,
-        contactPhone: formData.contactPhone || undefined,
-        contactEmail: formData.contactEmail || undefined,
-      };
-
-      onPropertyAdded(newProperty);
+    try {
+      await createPropertyMutation.mutateAsync(propertyData);
       resetForm();
       onClose();
-      setIsSubmitting(false);
-
-      toast({
-        title: "Property Added Successfully",
-        description: `${formData.title} has been added to your listings.`,
-      });
-    }, 1000);
+    } catch (error) {
+      // Error is handled by the mutation hook
+      console.error('Failed to create property:', error);
+    }
   };
 
   const updateField = (field: string, value: string) => {
@@ -303,16 +295,16 @@ export const AddPropertyForm = ({ isOpen, onClose, onPropertyAdded }: AddPropert
                 variant="outline"
                 onClick={onClose}
                 className="flex-1"
-                disabled={isSubmitting}
+                disabled={createPropertyMutation.isPending}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 className="flex-1"
-                disabled={isSubmitting}
+                disabled={createPropertyMutation.isPending}
               >
-                {isSubmitting ? (
+                {createPropertyMutation.isPending ? (
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
                     Adding Property...

@@ -1,73 +1,108 @@
-# Welcome to your Lovable project
+# PropertyPrime
 
-## Project info
+A comprehensive real estate management platform built with React, TypeScript, and Express.js.
 
-**URL**: https://lovable.dev/projects/336eaea4-daf0-4c49-9f84-2e0a195e69f5
+## Features
 
-## How can I edit this code?
+- **Property Listings** - Browse and search property listings
+- **Add Properties** - Create new property listings with detailed information
+- **REST API** - Full backend API for property management
+- **Responsive Design** - Modern UI with Tailwind CSS
+- **Real-time Updates** - Automatic list updates when properties are added
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+**Frontend:**
+- React 18 with TypeScript
+- Tailwind CSS for styling
+- React Query for state management
+- Radix UI components
+- Vite for development
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/336eaea4-daf0-4c49-9f84-2e0a195e69f5) and start prompting.
+**Backend:**
+- Express.js server
+- Zod for validation
+- CORS enabled
+- Rate limiting and security headers
 
-Changes made via Lovable will be committed automatically to this repo.
+## Getting Started
 
-**Use your preferred IDE**
+### Prerequisites
+- Node.js (v18 or higher)
+- npm or yarn
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. **Install dependencies:**
+```bash
+npm install
+```
 
-Follow these steps:
+2. **Install server dependencies:**
+```bash
+cd server
+npm install
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+3. **Start the API server:**
+```bash
+cd server
+npm start
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+4. **Start the frontend (in a new terminal):**
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Usage
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- **Frontend:** http://localhost:8080 (or 8081 if 8080 is busy)
+- **API Server:** http://localhost:3001
+- **API Health Check:** http://localhost:3001/health
 
-**Use GitHub Codespaces**
+## API Endpoints
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- `GET /properties` - Fetch all properties
+- `POST /properties` - Create new property
+- `GET /properties/:id` - Get specific property
+- `GET /health` - Server health check
 
-## What technologies are used for this project?
+## Project Structure
 
-This project is built with:
+```
+properti-prime/
+├── src/                    # Frontend source code
+│   ├── components/         # React components
+│   ├── hooks/             # Custom React hooks
+│   ├── services/          # API service layer
+│   └── pages/             # Page components
+├── server/                # Backend API server
+│   ├── server.js          # Express server
+│   ├── package.json       # Server dependencies
+│   └── .env              # Environment variables
+└── public/               # Static assets
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Development
 
-## How can I deploy this project?
+### Adding New Properties
+1. Click "Add Property" button in the UI
+2. Fill out the form with property details
+3. Submit to create via POST API
+4. List automatically updates with new property
 
-Simply open [Lovable](https://lovable.dev/projects/336eaea4-daf0-4c49-9f84-2e0a195e69f5) and click on Share -> Publish.
+### API Integration
+The frontend uses React Query for efficient data fetching and caching. All API calls go through the service layer in `src/services/api.ts`.
 
-## Can I connect a custom domain to my Lovable project?
+## Contributing
 
-Yes, you can!
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## License
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+MIT License - feel free to use this project for your own purposes.

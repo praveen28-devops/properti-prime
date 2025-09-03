@@ -4,12 +4,12 @@ import { PropertyCard, Property } from "@/components/PropertyCard";
 import { SearchFilters, FilterOptions } from "@/components/SearchFilters";
 import { PropertyModal } from "@/components/PropertyModal";
 import { AddPropertyForm } from "@/components/AddPropertyForm";
-import { mockProperties } from "@/data/mockProperties";
-import { Plus, Home } from "lucide-react";
+import { useProperties } from "@/hooks/useProperties";
+import { Plus, Home, Loader2, AlertCircle } from "lucide-react";
 import heroImage from "@/assets/hero-image.jpg";
 
 const Index = () => {
-  const [properties, setProperties] = useState<Property[]>(mockProperties);
+  const { data: properties = [], isLoading, error, isError } = useProperties();
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddFormOpen, setIsAddFormOpen] = useState(false);
@@ -74,9 +74,6 @@ const Index = () => {
     setSelectedProperty(null);
   };
 
-  const handlePropertyAdded = (newProperty: Property) => {
-    setProperties(prev => [newProperty, ...prev]);
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -138,37 +135,72 @@ const Index = () => {
           </Button>
         </div>
 
-        {/* Property Grid */}
-        {filteredProperties.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProperties.map((property) => (
-              <PropertyCard
-                key={property.id}
-                property={property}
-                onViewDetails={handleViewDetails}
-              />
-            ))}
-          </div>
-        ) : (
+        {/* Loading State */}
+        {isLoading && (
           <div className="text-center py-16">
             <div className="max-w-md mx-auto space-y-4">
-              <div className="w-24 h-24 mx-auto bg-muted rounded-full flex items-center justify-center">
-                <Home className="h-12 w-12 text-muted-foreground" />
+              <Loader2 className="h-12 w-12 mx-auto animate-spin text-primary" />
+              <h3 className="text-xl font-semibold text-foreground">Loading Properties...</h3>
+              <p className="text-muted-foreground">Please wait while we fetch the latest property listings.</p>
+            </div>
+          </div>
+        )}
+
+        {/* Error State */}
+        {isError && (
+          <div className="text-center py-16">
+            <div className="max-w-md mx-auto space-y-4">
+              <div className="w-24 h-24 mx-auto bg-destructive/10 rounded-full flex items-center justify-center">
+                <AlertCircle className="h-12 w-12 text-destructive" />
               </div>
-              <h3 className="text-2xl font-semibold text-foreground">No Properties Found</h3>
+              <h3 className="text-2xl font-semibold text-foreground">Failed to Load Properties</h3>
               <p className="text-muted-foreground">
-                No properties match your current search criteria. Try adjusting your filters or add a new property.
+                {error?.message || 'Unable to connect to the server. Please check if the API server is running.'}
               </p>
               <Button 
-                onClick={() => setIsAddFormOpen(true)}
-                variant="default"
+                onClick={() => window.location.reload()}
+                variant="outline"
                 size="lg"
               >
-                <Plus className="h-5 w-5 mr-2" />
-                Add First Property
+                Try Again
               </Button>
             </div>
           </div>
+        )}
+
+        {/* Property Grid */}
+        {!isLoading && !isError && (
+          filteredProperties.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredProperties.map((property) => (
+                <PropertyCard
+                  key={property.id}
+                  property={property}
+                  onViewDetails={handleViewDetails}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <div className="max-w-md mx-auto space-y-4">
+                <div className="w-24 h-24 mx-auto bg-muted rounded-full flex items-center justify-center">
+                  <Home className="h-12 w-12 text-muted-foreground" />
+                </div>
+                <h3 className="text-2xl font-semibold text-foreground">No Properties Found</h3>
+                <p className="text-muted-foreground">
+                  No properties match your current search criteria. Try adjusting your filters or add a new property.
+                </p>
+                <Button 
+                  onClick={() => setIsAddFormOpen(true)}
+                  variant="default"
+                  size="lg"
+                >
+                  <Plus className="h-5 w-5 mr-2" />
+                  Add First Property
+                </Button>
+              </div>
+            </div>
+          )
         )}
 
         {/* Floating Add Button - Desktop */}
@@ -193,7 +225,6 @@ const Index = () => {
       <AddPropertyForm
         isOpen={isAddFormOpen}
         onClose={() => setIsAddFormOpen(false)}
-        onPropertyAdded={handlePropertyAdded}
       />
     </div>
   );
