@@ -1,7 +1,7 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Bed, Bath, Square, DollarSign } from "lucide-react";
+import { MapPin, Bed, Bath, Square, DollarSign, Edit, Trash2 } from "lucide-react";
 
 export interface Property {
   id: string;
@@ -22,9 +22,11 @@ export interface Property {
 interface PropertyCardProps {
   property: Property;
   onViewDetails: (property: Property) => void;
+  onEdit?: (property: Property) => void;
+  onDelete?: (property: Property) => void;
 }
 
-export const PropertyCard = ({ property, onViewDetails }: PropertyCardProps) => {
+export const PropertyCard = ({ property, onViewDetails, onEdit, onDelete }: PropertyCardProps) => {
   const formatPrice = (price: number, type: "rent" | "sale") => {
     const formatted = new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -98,13 +100,35 @@ export const PropertyCard = ({ property, onViewDetails }: PropertyCardProps) => 
       </CardContent>
 
       <CardFooter className="p-4 pt-0">
-        <Button 
-          onClick={() => onViewDetails(property)}
-          className="w-full"
-          variant="default"
-        >
-          View Details
-        </Button>
+        <div className="flex gap-2 w-full">
+          <Button 
+            onClick={() => onViewDetails(property)}
+            className="flex-1"
+            variant="default"
+          >
+            View Details
+          </Button>
+          {onEdit && (
+            <Button 
+              onClick={() => onEdit(property)}
+              size="sm"
+              variant="outline"
+              className="px-3"
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+          )}
+          {onDelete && (
+            <Button 
+              onClick={() => onDelete(property)}
+              size="sm"
+              variant="outline"
+              className="px-3 text-destructive hover:text-destructive-foreground hover:bg-destructive"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </CardFooter>
     </Card>
   );

@@ -4,15 +4,20 @@ import { PropertyCard, Property } from "@/components/PropertyCard";
 import { SearchFilters, FilterOptions } from "@/components/SearchFilters";
 import { PropertyModal } from "@/components/PropertyModal";
 import { AddPropertyForm } from "@/components/AddPropertyForm";
-import { useProperties } from "@/hooks/useProperties";
+import { EditPropertyForm } from "@/components/EditPropertyForm";
+import { useProperties, useDeleteProperty } from "@/hooks/useProperties";
 import { Plus, Home, Loader2, AlertCircle } from "lucide-react";
+import { toast } from "sonner";
 import heroImage from "@/assets/hero-image.jpg";
 
 const Index = () => {
   const { data: properties = [], isLoading, error, isError } = useProperties();
+  const deletePropertyMutation = useDeleteProperty();
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [editingProperty, setEditingProperty] = useState<Property | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddFormOpen, setIsAddFormOpen] = useState(false);
+  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [filters, setFilters] = useState<FilterOptions>({
     searchTerm: "",
     propertyType: "all",
@@ -72,6 +77,31 @@ const Index = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedProperty(null);
+  };
+
+  const handleEditProperty = (property: Property) => {
+    setEditingProperty(property);
+    setIsEditFormOpen(true);
+  };
+
+  const handleDeleteProperty = async (property: Property) => {
+    if (window.confirm(`Are you sure you want to delete "${property.title}"? This action cannot be undone.`)) {
+      try {
+        await deletePropertyMutation.mutateAsync(property.id);
+      } catch (error) {
+        console.error('Failed to delete property:', error);
+      }
+    }
+  };
+
+  const handleEditSuccess = () => {
+    setIsEditFormOpen(false);
+    setEditingProperty(null);
+  };
+
+  const handleEditCancel = () => {
+    setIsEditFormOpen(false);
+    setEditingProperty(null);
   };
 
 
@@ -177,6 +207,8 @@ const Index = () => {
                   key={property.id}
                   property={property}
                   onViewDetails={handleViewDetails}
+                  onEdit={handleEditProperty}
+                  onDelete={handleDeleteProperty}
                 />
               ))}
             </div>
@@ -226,6 +258,22 @@ const Index = () => {
         isOpen={isAddFormOpen}
         onClose={() => setIsAddFormOpen(false)}
       />
+
+      {/* Edit Property Modal */}
+      {editingProperty && (
+        <div className={`fixed inset-0 z-50 ${isEditFormOpen ? 'block' : 'hidden'}`}>
+          <div className="fixed inset-0 bg-black/50" onClick={handleEditCancel} />
+          <div className="fixed inset-0 flex items-center justify-center p-4 overflow-y-auto">
+            <div className="relative bg-background rounded-lg shadow-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+              <EditPropertyForm
+                property={editingProperty}
+                onSuccess={handleEditSuccess}
+                onCancel={handleEditCancel}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
