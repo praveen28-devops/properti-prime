@@ -3,8 +3,8 @@ import { Property } from "@/components/PropertyCard";
 export const mockProperties: Property[] = [
   {
     id: "1",
-    title: "Modern Downtown Apartment",
-    address: "123 Main Street, Downtown, NY 10001",
+    title: "Mumbai Downtown Apartment",
+    address: "123 Main Street, Downtown, Mumbai 600001",
     price: 3500,
     priceType: "rent",
     propertyType: "apartment",

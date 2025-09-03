@@ -9,7 +9,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002 ;
 
 // Middleware
 app.use(helmet());
@@ -30,9 +30,9 @@ app.use(limiter);
 let properties = [
   {
     id: "1",
-    title: "Modern Downtown Apartment",
-    address: "123 Main Street, Downtown, NY 10001",
-    price: 3500,
+    title: "Mumbai Downtown Apartment",
+    address: "123 Main Street, Downtown, Mumbai 400001",
+    price: 2500,
     priceType: "rent",
     propertyType: "apartment",
     bedrooms: 2,
@@ -42,7 +42,22 @@ let properties = [
     imageUrl: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop",
     contactPhone: "(555) 123-4567",
     contactEmail: "agent@modernproperties.com"
-  }
+  },
+  {
+    id: "2",
+    title: "Luxury Family Home",
+    address: "456 Oak Avenue, Suburbia, Pune 411001",
+    price: 850000,
+    priceType: "sale",
+    propertyType: "house",
+    bedrooms: 4,
+    bathrooms: 3.5,
+    squareFeet: 2800,
+    description: "Stunning single-family home with spacious rooms and premium finishes. Features a gourmet kitchen, master suite with walk-in closet, finished basement, and beautifully landscaped backyard. Perfect for families.",
+    imageUrl: "https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=800&h=600&fit=crop",
+    contactPhone: "(555) 987-6543",
+    contactEmail: "luxury@realestate.com"
+  },
 ];
 
 // Property validation schema
